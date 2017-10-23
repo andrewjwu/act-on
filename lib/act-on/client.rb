@@ -10,17 +10,29 @@ module ActOn
       [ActOn.url, "token"].join("/")
     end
 
-    def authenticate
+    def authenticate(grant_type = nil)
       params = {
         grant_type: "password",
-        username: ActOn.username,
-        password: ActOn.password,
         client_id: ActOn.client_id,
         client_secret: ActOn.client_secret
       }
+
+      case grant_type
+      when :refresh
+        params[:grant_type] = "refresh_token"
+        params[:refresh_token] = ActOn.refresh_token
+      else
+        params[:username] = ActOn.username
+        params[:password] = ActOn.password
+      end
+
       response = post(authenticate_url, params)
       raise response unless response["error"].nil?
+
       ActOn.access_token = response["access_token"]
+      ActOn.refresh_token = response["refresh_token"]
+      ActOn.expires_in = Time.now + 3600
+      true
     end
 
     def lists_url

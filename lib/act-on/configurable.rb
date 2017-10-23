@@ -10,6 +10,8 @@ module ActOn
     CONFIG_KEYS = [
       :url,
       :access_token,
+      :refresh_token,
+      :expires_in,
       :client_id,
       :client_secret,
       :username,
