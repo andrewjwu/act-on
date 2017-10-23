@@ -48,11 +48,23 @@ module ActOn
     end
 
     def create_contact(list_id, contact)
-      headers = { 
+      headers = {
         "Authorization" => "Bearer #{ActOn.access_token}",
         :content_type => "application/json"
       }
       post(create_contact_url(list_id), contact.to_json, headers)
+    end
+
+    def update_contact_url(list_id, email)
+      [ActOn.url, "api", "1", "list", list_id, "record?email=#{email}"].join("/")
+    end
+
+    def update_contact(list_id, email, contact)
+      headers = {
+        "Authorization" => "Bearer #{ActOn.access_token}",
+        :content_type => "application/json"
+      }
+      put(update_contact_url(list_id, email), contact.to_json, headers)
     end
 
     def get(url, params={})
@@ -65,6 +77,10 @@ module ActOn
       JSON.parse(
         RestClient.post(url, params, headers)
       )
+    end
+
+    def put(url, params, headers={})
+      RestClient.put(url, params, headers)
     end
   end
 end
